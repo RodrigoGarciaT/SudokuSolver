@@ -1,11 +1,5 @@
 import pygame
 
-def redrawGameWindow(win,width,rows):
-    win.fill((255, 255, 255))
-    draw_board(width,rows,win)
-    for number in numberList:
-        number.draw_number(win,width,rows)
-    pygame.display.update()
 
 
 class numbers():
@@ -13,16 +7,19 @@ class numbers():
         self.pos = pos
         self.number = number
 
-    def draw_number(self,win,w,rows):
+    def draw_number(self, win, w, rows, OccupiedSpaces):
         font = pygame.font.SysFont('comicsans', 30, True)
         text = font.render(str(self.number), 1, (0, 0, 0))
         self.position_number(w,rows)
-        win.blit(text, self.pos)
+
+        if not self.pos in OccupiedSpaces:
+            win.blit(text, self.pos)
+        else:
+            numberList.remove(self)
+        OccupiedSpaces[self.pos] = True
 
     def position_number(self,w,rows):
         self.pos=(self.pos[0] // (w // rows)*55+(55//2)-10, self.pos[1]//(w // rows)*55+(55//5))
-
-
 
 numberList =[]
 
@@ -39,6 +36,17 @@ def draw_board(w, rows, surface):
         pygame.draw.line(surface, (0,0,0), (50,y),(w+startPoint,y),bold)
         x = x + sizeBtwn
         y = y + sizeBtwn
+
+
+def redrawGameWindow(win,width,rows):
+    win.fill((255, 255, 255))
+    draw_board(width, rows, win)
+    OccupiedSpaces={}
+    for number in reversed(numberList):
+        number.draw_number(win, width, rows, OccupiedSpaces)
+    OccupiedSpaces.clear()
+    pygame.display.update()
+
 
 def main():
     pygame.init()
