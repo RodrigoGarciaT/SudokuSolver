@@ -1,7 +1,6 @@
 import pygame
 
 
-
 class numbers():
     def __init__(self,number,pos):
         self.pos = pos
@@ -13,7 +12,8 @@ class numbers():
         self.position_number(w,rows)
 
         if not self.pos in OccupiedSpaces:
-            win.blit(text, self.pos)
+            if self.number:
+                win.blit(text, self.pos)
         else:
             numberList.remove(self)
         OccupiedSpaces[self.pos] = True
@@ -71,11 +71,12 @@ def main():
             print(pos)
 
         keys = pygame.key.get_pressed()
-        num_key = [pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9]
+        num_key = [pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9,
+                   pygame.K_KP0,pygame.K_KP1,pygame.K_KP2,pygame.K_KP3,pygame.K_KP4,pygame.K_KP5,pygame.K_KP6,pygame.K_KP7,pygame.K_KP8,pygame.K_KP9]
 
-        for i in range(9):
+        for i in range(20):
             if keys[num_key[i]]:
-                number = i+1
+                number = i%10
                 numberList.append(numbers(number, pos))
                 print((pos[0] // (width // rows))*55, ' ', (pos[1]//(width // rows))*55)
         redrawGameWindow(win, width, rows)
