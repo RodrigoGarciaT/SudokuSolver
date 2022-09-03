@@ -1,15 +1,28 @@
 import pygame
 
 
+def draw_board(w, rows, surface,startX,startY,rowSize):
+    x = startX  # Keeps track of the current x
+    y = startY  # Keeps track of the current y
+    for l in range(rows+1):  # We will draw one vertical and one horizontal line each loop
+        bold = 3 if not l%3 else 1
+        pygame.draw.line(surface, (0,0,0), (x,startY),(x,w+startY),bold)
+        pygame.draw.line(surface, (0,0,0), (startX,y),(w+startX,y),bold)
+        x = x + rowSize
+        y = y + rowSize
+
+
 class numbers():
     def __init__(self,number,pos):
         self.pos = pos
         self.number = number
 
-    def draw_number(self, win, w, rows, OccupiedSpaces):
-        font = pygame.font.SysFont('comicsans', 30, True)
+    def draw_number(self, win, OccupiedSpaces, rowSize,startX,startY):
+        fontSize=int(rowSize//1.8)
+        print(fontSize)
+        font = pygame.font.SysFont('comicsans',fontSize , True)
         text = font.render(str(self.number), 1, (0, 0, 0))
-        self.position_number(w,rows)
+        self.position_number(rowSize,startX,startY)
 
         if not self.pos in OccupiedSpaces:
             if self.number:
@@ -18,41 +31,29 @@ class numbers():
             numberList.remove(self)
         OccupiedSpaces[self.pos] = True
 
-    def position_number(self,w,rows):
-        self.pos=(self.pos[0] // (w // rows)*55+(55//2)-10, self.pos[1]//(w // rows)*55+(55//5))
+    def position_number(self, rowSize,startX,startY):
+        self.pos=((self.pos[0]-startX)// rowSize*rowSize+(rowSize/2)-(rowSize/5.4)+startX, (self.pos[1]-startY)//rowSize*rowSize+(rowSize/4)+startY)
 
 numberList =[]
 
 
-def draw_board(w, rows, surface):
-    sizeBtwn = w // rows  # Gives us the distance between the lines
-
-    x = 50  # Keeps track of the current x
-    y = 50  # Keeps track of the current y
-    startPoint=50
-    for l in range(rows+1):  # We will draw one vertical and one horizontal line each loop
-        bold = 3 if not l%3 else 1
-        pygame.draw.line(surface, (0,0,0), (x,50),(x,w+startPoint),bold)
-        pygame.draw.line(surface, (0,0,0), (50,y),(w+startPoint,y),bold)
-        x = x + sizeBtwn
-        y = y + sizeBtwn
-
-
-def redrawGameWindow(win,width,rows):
+def redrawGameWindow(win,width,rows, startX, startY, rowSize):
     win.fill((255, 255, 255))
-    draw_board(width, rows, win)
+    draw_board(width, rows, win, startX, startY,rowSize)
     OccupiedSpaces={}
     for number in reversed(numberList):
-        number.draw_number(win, width, rows, OccupiedSpaces)
+        number.draw_number(win, OccupiedSpaces,rowSize,startX,startY)
     OccupiedSpaces.clear()
     pygame.display.update()
 
 
 def main():
     pygame.init()
-    height = 500
-    width = 500
+    width = 450
     rows = 9
+    rowSize=width//rows
+    startX=15
+    startY=15
     win = pygame.display.set_mode((1000, 1000))
     pygame.display.set_caption("First Game")
     run = True
@@ -78,8 +79,8 @@ def main():
             if keys[num_key[i]]:
                 number = i%10
                 numberList.append(numbers(number, pos))
-                print((pos[0] // (width // rows))*55, ' ', (pos[1]//(width // rows))*55)
-        redrawGameWindow(win, width, rows)
+                print(pos[0] // rowSize*rowSize, ' ', (pos[1]//rowSize)*rowSize)
+        redrawGameWindow(win, width, rows,startX,startY,rowSize)
     pygame.quit()
 
 
