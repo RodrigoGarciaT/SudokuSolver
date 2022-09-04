@@ -19,12 +19,11 @@ class numbers():
 
     def draw_number(self, win, OccupiedSpaces, rowSize,startX,startY):
         fontSize=int(rowSize//1.8)
-        print(fontSize)
         font = pygame.font.SysFont('comicsans',fontSize , True)
         text = font.render(str(self.number), 1, (0, 0, 0))
         self.position_number(rowSize,startX,startY)
 
-        if not self.pos in OccupiedSpaces:
+        if self.pos not in OccupiedSpaces:
             if self.number:
                 win.blit(text, self.pos)
         else:
@@ -78,8 +77,9 @@ def main():
         for i in range(20):
             if keys[num_key[i]]:
                 number = i%10
-                numberList.append(numbers(number, pos))
-                print(pos[0] // rowSize*rowSize, ' ', (pos[1]//rowSize)*rowSize)
+                if startX <= pos[0] <= (rowSize*rows)+startX and startY <= pos[1] <= (rowSize*rows)+startY:
+                    numberList.append(numbers(number, pos))
+                    print(pos[0] // rowSize*rowSize, ' ', (pos[1]//rowSize)*rowSize)
         redrawGameWindow(win, width, rows,startX,startY,rowSize)
     pygame.quit()
 
