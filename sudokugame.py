@@ -51,12 +51,25 @@ def main():
     width = 450
     rows = 9
     rowSize=width//rows
-    startX=15
-    startY=15
-    win = pygame.display.set_mode((1000, 1000))
-    pygame.display.set_caption("First Game")
+    startX=55
+    startY=80
     run = True
     pos = (0, 0)
+
+    board =[
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    ]
+    win = pygame.display.set_mode((1000, 1000))
+    pygame.display.set_caption("First Game")
+
     while run:
 
         for event in pygame.event.get():
@@ -77,9 +90,12 @@ def main():
         for i in range(20):
             if keys[num_key[i]]:
                 number = i%10
-                if startX <= pos[0] <= (rowSize*rows)+startX and startY <= pos[1] <= (rowSize*rows)+startY:
+                if startX < pos[0] < (rowSize*rows)+startX and startY < pos[1] < (rowSize*rows)+startY:
                     numberList.append(numbers(number, pos))
-                    print(pos[0] // rowSize*rowSize, ' ', (pos[1]//rowSize)*rowSize)
+                    x = (pos[0] - startX) // rowSize
+                    y = (pos[1]-startY)//rowSize
+                    board[y][x] = number
+
         redrawGameWindow(win, width, rows,startX,startY,rowSize)
     pygame.quit()
 
