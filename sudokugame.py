@@ -11,6 +11,19 @@ def draw_board(w, rows, surface,startX,startY,rowSize):
         x = x + rowSize
         y = y + rowSize
 
+class button():
+    def __init__(self, x, y):
+        self.x=x
+        self.y=y
+        self.hover=0
+    def draw:
+        pass
+
+    def isOver:
+        pass
+
+    def isClicked:
+        pass
 
 class numbers():
     def __init__(self,number,pos):
@@ -48,11 +61,11 @@ def redrawGameWindow(win,width,rows, startX, startY, rowSize):
 
 def main():
     pygame.init()
-    width = 450
+    width = 400
     rows = 9
     rowSize=width//rows
-    startX=55
-    startY=80
+    startX=100
+    startY=100
     run = True
     pos = (0, 0)
 
@@ -67,7 +80,7 @@ def main():
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
     ]
-    win = pygame.display.set_mode((1000, 1000))
+    win = pygame.display.set_mode((800, 800))
     pygame.display.set_caption("First Game")
 
     while run:
