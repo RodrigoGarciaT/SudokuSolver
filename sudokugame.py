@@ -11,18 +11,20 @@ def draw_board(w, rows, surface,startX,startY,rowSize):
         x = x + rowSize
         y = y + rowSize
 
+
 class button():
     def __init__(self, x, y):
         self.x=x
         self.y=y
         self.hover=0
-    def draw:
+
+    def draw(self):
         pass
 
-    def isOver:
+    def isOver(self):
         pass
 
-    def isClicked:
+    def isClicked(self):
         pass
 
 class numbers():
