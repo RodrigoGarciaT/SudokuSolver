@@ -1,4 +1,5 @@
 import pygame
+import sudokuGenerator
 
 
 def draw_board(w, rows, surface,startX,startY,rowSize):
@@ -11,6 +12,14 @@ def draw_board(w, rows, surface,startX,startY,rowSize):
         x = x + rowSize
         y = y + rowSize
 
+
+def draw_sudoku(board,startX,startY,rowSize,rows):
+    pos = (0, 0)
+    for i in range(0,rows):
+        for j in range(0,rows):
+            pos = (startX+i*rowSize, startY + j * rowSize)
+            if board[i][j]:
+                numberList.append(numbers(board[i][j], pos))
 
 class button():
     def __init__(self, x, y):
@@ -70,18 +79,8 @@ def main():
     startY=100
     run = True
     pos = (0, 0)
-
-    board =[
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    ]
+    board = sudokuGenerator.generate_sudoku()
+    draw_sudoku(board,startX,startY,rowSize,rows)
     win = pygame.display.set_mode((800, 800))
     pygame.display.set_caption("First Game")
 
