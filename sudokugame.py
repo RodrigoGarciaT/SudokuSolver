@@ -1,6 +1,6 @@
 import pygame
 import sudokuGenerator
-
+from copy import deepcopy
 
 def draw_board(w, rows, surface, startX, startY, rowSize):
     x = startX  # Keeps track of the current x
@@ -26,7 +26,7 @@ def draw_title(surface, startX, startY, rowSize):
 def draw_sudoku(board, startX, startY, rowSize, rows):
     for i in range(0, rows):
         for j in range(0, rows):
-            pos = (startY + j * rowSize, startX + (i+1) * rowSize)
+            pos = (startX + j * rowSize, startY + i * rowSize)
             if board[i][j]:
                 numberList.append(numbers(board[i][j], pos, (0, 0, 0)))
 
@@ -34,18 +34,20 @@ def draw_sudoku(board, startX, startY, rowSize, rows):
 class button():
     def __init__(self, text):
         self.text = text
+        self.posX = 0
+        self.posY = 0
 
     def draw(self, surface, startX, startY, rowSize, rows):
         color = (192, 192, 192)
         spacebtw = rowSize // 2.1
-        posX = spacebtw / 1.4 + startX
-        posY = spacebtw + startY + rowSize * rows
-        pygame.draw.rect(surface, color, pygame.Rect(posX, posY, rowSize * 2.5, rowSize * 1.2))
+        self.posX = spacebtw / 1.4 + startX
+        self.posY = spacebtw + startY + rowSize * rows
+        pygame.draw.rect(surface, color, pygame.Rect(self.posX, self.posY, rowSize * 2.5, rowSize * 1.2))
 
         fontSize = int(rowSize // 2.7)
         font = pygame.font.SysFont('comicsans', fontSize, True)
         text = font.render(self.text, 1, (0, 0, 0))
-        surface.blit(text, (posX + rowSize / 6, posY + rowSize / 4))
+        surface.blit(text, (self.posX + rowSize / 6, self.posY + rowSize / 4))
 
     def isOver(self):
         pass
@@ -102,7 +104,7 @@ def redrawGameWindow(win, width, rows, startX, startY, rowSize):
 
 def main():
     pygame.init()
-    width = 500
+    width = 200
     rows = 9
     rowSize = width // rows
     startX = 50
@@ -110,7 +112,7 @@ def main():
     run = True
     pos = (0, 0)
     start_board = sudokuGenerator.generate_sudoku()
-    board = start_board
+    board = deepcopy(start_board)
 
     for i in start_board:
         print(i)
@@ -145,6 +147,7 @@ def main():
                     x = (pos[0] - startX) // rowSize
                     y = (pos[1] - startY) // rowSize
                     if not start_board[y][x]:
+                        print("hello")
                         board[y][x] = number
                         numberList.append(numbers(number, pos, (0, 0, 255)))
         redrawGameWindow(win, width, rows, startX, startY, rowSize)
