@@ -1,6 +1,7 @@
 import pygame
 import sudokuGenerator
 import SudokuSolver
+import time
 from copy import deepcopy
 
 
@@ -55,20 +56,20 @@ class buttons():
         text = font.render(self.text, 1, (0, 0, 0))
         surface.blit(text, (self.posX + rowSize / 6, self.posY + rowSize / 4))
 
-    def isOver(self, pos, start_board, board, startX, startY, rowSize, rows, mousepressed):
+    def isOver(self, surface, pos, start_board, board, startX, startY, rowSize, rows, mousepressed):
         if not mousepressed:
             return
-        if self.posX <= pos[0] <= self.posX+self.sizeX:
-            if self.posY <= pos[1] <= self.posY+self.sizeY:
+        if self.posX <= pos[0] <= self.posX + self.sizeX:
+            if self.posY <= pos[1] <= self.posY + self.sizeY:
                 print("what", pos)
-                self.isClicked(start_board, board, startX, startY, rowSize, rows)
+                self.isClicked(surface, start_board, board, startX, startY, rowSize, rows)
 
 
 class new_puzzle(buttons):
     def __init__(self, text):
         super().__init__(text)
 
-    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
+    def isClicked(self, surface, start_board, board, startX, startY, rowSize, rows):
         start_board.clear()
         board.clear()
         start_board += sudokuGenerator.generate_sudoku()
@@ -82,24 +83,50 @@ class check_puzzle(buttons):
     def __init__(self, text):
         super().__init__(text)
 
-    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
+    def isClicked(self, surface, start_board, board, startX, startY, rowSize, rows):
+        msg = "Solved"
         for i in range(9):
             for j in range(9):
-                if  not SudokuSolver.check_correctness(board[i][j], i, j, board):
+                if not SudokuSolver.check_correctness(board[i][j], i, j, board):
                     print("you failed")
+                    msg = "You Failed"
+
+        fontSize = int(rowSize)
+        print(fontSize)
+        font = pygame.font.SysFont('comicsans', fontSize, True)
+        text = font.render(msg, 1, (255, 0, 0))
+
+        print(text)
+        surface.blit(text, (startX+2.5*rowSize, startY+ rowSize*3.5))
+        pygame.display.update()
+        time.sleep(2)
+
 
 class solve_puzzle(buttons):
     def __init__(self, text):
         super().__init__(text)
 
-    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
-        start_board.clear()
-        board.clear()
-        start_board += sudokuGenerator.generate_sudoku()
-        board += deepcopy(start_board)
-        numberList.clear()
-        draw_sudoku(board, startX, startY, rowSize, rows)
-        print(start_board)
+    def isClicked(self, surface, start_board, board, startX, startY, rowSize, rows):
+        copyboard = deepcopy(start_board)
+        sudoku_lists = SudokuSolver.main(copyboard)
+        print(len(sudoku_lists))
+        for i in sudoku_lists:
+            board.clear()
+            numberList.clear()
+            board += i
+            draw_sudoku(start_board, startX, startY, rowSize, rows)
+            for j in range(9):
+                for k in range(9):
+                    pos = (startX + k * rowSize, startY + j * rowSize)
+                    if not start_board[j][k]:
+                        numbers(board[j][k], pos, (0, 0, 255))
+            OccupiedSpaces = {}
+            for number in reversed(numberList):
+                number.draw_number(surface, OccupiedSpaces, rowSize, startX, startY)
+            print(board)
+            pygame.display.update()
+            time.sleep(5)
+
 
 button1 = new_puzzle("New Puzzle")
 button2 = check_puzzle("Check Puzzle")
@@ -196,9 +223,10 @@ def main():
                         print("hello")
                         board[y][x] = number
                         numberList.append(numbers(number, pos, (0, 0, 255)))
-        button1.isOver(pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
-        button2.isOver(pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
-        #print(start_board)
+        button1.isOver(win, pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
+        button2.isOver(win, pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
+        button3.isOver(win, pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
+        print("finishedloop")
         redrawGameWindow(win, width, rows, startX, startY, rowSize)
     pygame.quit()
 
