@@ -119,13 +119,12 @@ class solve_puzzle(buttons):
                 for k in range(9):
                     pos = (startX + k * rowSize, startY + j * rowSize)
                     if not start_board[j][k]:
-                        numbers(board[j][k], pos, (0, 0, 255))
-            OccupiedSpaces = {}
-            for number in reversed(numberList):
-                number.draw_number(surface, OccupiedSpaces, rowSize, startX, startY)
+                        numberList.append(numbers(board[j][k], pos, (0, 0, 255)))
+            redrawGameWindow(surface, rowSize*rows, rows, startX, startY, rowSize)
             print(board)
+
             pygame.display.update()
-            time.sleep(5)
+            time.sleep(5/len(sudoku_lists))
 
 
 button1 = new_puzzle("New Puzzle")
@@ -140,6 +139,7 @@ class numbers():
         self.color = color
 
     def draw_number(self, win, OccupiedSpaces, rowSize, startX, startY):
+        #print("what")
         fontSize = int(rowSize // 1.8)
         font = pygame.font.SysFont('comicsans', fontSize, True)
         text = font.render(str(self.number), 1, self.color)

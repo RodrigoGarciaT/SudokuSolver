@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 def check_correctness(number, posi, posj, board):
     for i in range(9):
         if i is not posi:
@@ -18,11 +21,12 @@ def check_correctness(number, posi, posj, board):
 
 
 def solve(number, posi, posj, board, board_list):
-    print(posi, posj, number)
+    #print(posi, posj, number)
     if not check_correctness(number, posi, posj, board):
         return False
     board[posi][posj] = number
-    board_list.append(board)
+    board_list.append(deepcopy(board))
+    print(board)
     empty_space = False
     for i in range(0, 9):
         for j in range(0, 9):
@@ -77,5 +81,6 @@ board = [
     [0, 0, 9, 8, 0, 0, 0, 3, 6],
     [0, 0, 0, 3, 0, 6, 0, 9, 0],
 ]
-
+listboard = main(board)
 print(len(main(board)))
+print(listboard[0])
