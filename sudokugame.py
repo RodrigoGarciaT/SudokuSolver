@@ -2,9 +2,10 @@ import pygame
 import sudokuGenerator
 
 
-def draw_board(w, rows, surface,startX,startY,rowSize):
+def draw_board(w, rows, surface, startX, startY, rowSize):
     x = startX  # Keeps track of the current x
     y = startY  # Keeps track of the current y
+    w = w//rowSize*rowSize
     for l in range(rows+1):  # We will draw one vertical and one horizontal line each loop
         bold = 3 if not l%3 else 1
         pygame.draw.line(surface, (0,0,0), (x,startY),(x,w+startY),bold)
@@ -12,6 +13,14 @@ def draw_board(w, rows, surface,startX,startY,rowSize):
         x = x + rowSize
         y = y + rowSize
 
+
+def draw_title(surface, startX, startY , rowSize):
+    fontSize = int(rowSize // 1.4)
+    font = pygame.font.SysFont('comicsans', fontSize, True)
+    text = font.render("Sudoku Game", 1, (0, 0, 0))
+    posX = startX+2*rowSize
+    posY = startY-1.5*rowSize
+    surface.blit(text, (posX + rowSize / 6, posY + rowSize / 4))
 
 def draw_sudoku(board,startX,startY,rowSize,rows):
     pos = (0, 0)
@@ -22,19 +31,32 @@ def draw_sudoku(board,startX,startY,rowSize,rows):
                 numberList.append(numbers(board[i][j], pos))
 
 class button():
-    def __init__(self, x, y):
-        self.x=x
-        self.y=y
-        self.hover=0
+    def __init__(self, text):
+        self.text = text
 
-    def draw(self):
-        pass
+    def draw(self,surface, startX, startY, rowSize, rows):
+        color = (192, 192, 192)
+        spacebtw = rowSize//2.1
+        posX = spacebtw/1.4+startX
+        posY = spacebtw+ startY+rowSize*rows
+        pygame.draw.rect(surface, color, pygame.Rect(posX, posY, rowSize*2.5, rowSize*1.2))
+
+        fontSize = int(rowSize // 2.7)
+        font = pygame.font.SysFont('comicsans', fontSize, True)
+        text = font.render(self.text, 1, (0, 0, 0))
+        surface.blit(text, (posX+rowSize/6, posY+rowSize/4))
 
     def isOver(self):
         pass
 
     def isClicked(self):
         pass
+
+
+button1 = button("New Puzzle")
+button2 = button("Check Puzzle")
+button3 = button("Solve Puzzle")
+
 
 class numbers():
     def __init__(self,number,pos):
@@ -54,7 +76,7 @@ class numbers():
             numberList.remove(self)
         OccupiedSpaces[self.pos] = True
 
-    def position_number(self, rowSize,startX,startY):
+    def position_number(self, rowSize, startX, startY):
         self.pos=((self.pos[0]-startX)// rowSize*rowSize+(rowSize/2)-(rowSize/5.4)+startX, (self.pos[1]-startY)//rowSize*rowSize+(rowSize/4)+startY)
 
 numberList =[]
@@ -62,7 +84,11 @@ numberList =[]
 
 def redrawGameWindow(win,width,rows, startX, startY, rowSize):
     win.fill((255, 255, 255))
+    draw_title(win, startX,startY, rowSize)
     draw_board(width, rows, win, startX, startY,rowSize)
+    button1.draw(win,startX, startY, rowSize, rows)
+    button2.draw(win, startX+rowSize*3, startY, rowSize, rows)
+    button3.draw(win, startX+rowSize*6, startY, rowSize, rows)
     OccupiedSpaces={}
     for number in reversed(numberList):
         number.draw_number(win, OccupiedSpaces,rowSize,startX,startY)
@@ -72,7 +98,7 @@ def redrawGameWindow(win,width,rows, startX, startY, rowSize):
 
 def main():
     pygame.init()
-    width = 400
+    width = 500
     rows = 9
     rowSize=width//rows
     startX=100
