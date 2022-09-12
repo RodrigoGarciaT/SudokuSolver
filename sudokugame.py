@@ -1,6 +1,8 @@
 import pygame
 import sudokuGenerator
+import SudokuSolver
 from copy import deepcopy
+
 
 def draw_board(w, rows, surface, startX, startY, rowSize):
     x = startX  # Keeps track of the current x
@@ -31,34 +33,77 @@ def draw_sudoku(board, startX, startY, rowSize, rows):
                 numberList.append(numbers(board[i][j], pos, (0, 0, 0)))
 
 
-class button():
+class buttons():
     def __init__(self, text):
         self.text = text
-        self.posX = 0
-        self.posY = 0
+        self.posX = 9999
+        self.posY = 9999
+        self.sizeX = 9999
+        self.sizeY = 9999
 
     def draw(self, surface, startX, startY, rowSize, rows):
         color = (192, 192, 192)
         spacebtw = rowSize // 2.1
         self.posX = spacebtw / 1.4 + startX
         self.posY = spacebtw + startY + rowSize * rows
-        pygame.draw.rect(surface, color, pygame.Rect(self.posX, self.posY, rowSize * 2.5, rowSize * 1.2))
+        self.sizeX = rowSize * 2.5
+        self.sizeY = rowSize * 1.2
+        pygame.draw.rect(surface, color, pygame.Rect(self.posX, self.posY, self.sizeX, self.sizeY))
 
         fontSize = int(rowSize // 2.7)
         font = pygame.font.SysFont('comicsans', fontSize, True)
         text = font.render(self.text, 1, (0, 0, 0))
         surface.blit(text, (self.posX + rowSize / 6, self.posY + rowSize / 4))
 
-    def isOver(self):
-        pass
+    def isOver(self, pos, start_board, board, startX, startY, rowSize, rows, mousepressed):
+        if not mousepressed:
+            return
+        if self.posX <= pos[0] <= self.posX+self.sizeX:
+            if self.posY <= pos[1] <= self.posY+self.sizeY:
+                print("what", pos)
+                self.isClicked(start_board, board, startX, startY, rowSize, rows)
 
-    def isClicked(self):
-        pass
+
+class new_puzzle(buttons):
+    def __init__(self, text):
+        super().__init__(text)
+
+    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
+        start_board.clear()
+        board.clear()
+        start_board += sudokuGenerator.generate_sudoku()
+        board += deepcopy(start_board)
+        numberList.clear()
+        draw_sudoku(board, startX, startY, rowSize, rows)
+        print(start_board)
 
 
-button1 = button("New Puzzle")
-button2 = button("Check Puzzle")
-button3 = button("Solve Puzzle")
+class check_puzzle(buttons):
+    def __init__(self, text):
+        super().__init__(text)
+
+    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
+        for i in range(9):
+            for j in range(9):
+                if  not SudokuSolver.check_correctness(board[i][j], i, j, board):
+                    print("you failed")
+
+class solve_puzzle(buttons):
+    def __init__(self, text):
+        super().__init__(text)
+
+    def isClicked(self, start_board, board, startX, startY, rowSize, rows):
+        start_board.clear()
+        board.clear()
+        start_board += sudokuGenerator.generate_sudoku()
+        board += deepcopy(start_board)
+        numberList.clear()
+        draw_sudoku(board, startX, startY, rowSize, rows)
+        print(start_board)
+
+button1 = new_puzzle("New Puzzle")
+button2 = check_puzzle("Check Puzzle")
+button3 = solve_puzzle("Solve Puzzle")
 
 
 class numbers():
@@ -104,7 +149,7 @@ def redrawGameWindow(win, width, rows, startX, startY, rowSize):
 
 def main():
     pygame.init()
-    width = 200
+    width = 500
     rows = 9
     rowSize = width // rows
     startX = 50
@@ -119,9 +164,9 @@ def main():
     draw_sudoku(board, startX, startY, rowSize, rows)
     win = pygame.display.set_mode((800, 800))
     pygame.display.set_caption("First Game")
-
+    clock = pygame.time.Clock()
     while run:
-
+        clock.tick(27)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -132,7 +177,8 @@ def main():
             print("Left Mouse Key is being pressed")
             pos = pygame.mouse.get_pos()
             print(pos)
-
+        else:
+            mouse_pressed = False
         keys = pygame.key.get_pressed()
         num_key = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7,
                    pygame.K_8, pygame.K_9,
@@ -150,6 +196,9 @@ def main():
                         print("hello")
                         board[y][x] = number
                         numberList.append(numbers(number, pos, (0, 0, 255)))
+        button1.isOver(pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
+        button2.isOver(pos, start_board, board, startX, startY, rowSize, rows, mouse_pressed)
+        #print(start_board)
         redrawGameWindow(win, width, rows, startX, startY, rowSize)
     pygame.quit()
 
